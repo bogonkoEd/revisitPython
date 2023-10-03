@@ -1,6 +1,7 @@
 import json
 import tarfile
 import pandas
+import os
 
 """The tarfile module makes it possible to read and write tar archives"""
 
@@ -21,6 +22,7 @@ def load_dataset(dataset_path):
 
     return data_frame
     
+
 def generate_language_excel_files(data_frame, output_dir):
 
 """Combines data from 'en-US' and other locales and saves as Excel files.
@@ -48,3 +50,19 @@ def generate_language_excel_files(data_frame, output_dir):
 
         output_file_path = os.path.join(output_dir, f'en-{locale}.xlsx')
         combined_data.to_excel(output_file_path, index=False)
+
+    
+def filter_into_jsonl(xlsx_file_path, output_dir, filter_column, filter_value):
+    """Reads data from Excel file, filters it based on a specified column and value and saves as jsonl file
+    Args:
+        xlsx_file_path (str): Input Excel file path, output_dir (str): Output directory for JSON Lines file, filter_column (str): Column to filter
+        filter_value (str): Value to filter by"""
+
+    data_f = pandas.read_excel(xlsx_file_path)
+    filtered_data = data_f[data_f[filter_column] == filter_value]
+    filtered_data_dict = filtered_data.to_dict(orient='records')
+
+    jsonl_file_path = os.path.join(output_dir, f'{filter_value}.jsonl')
+    with open(jsonl_file_path, 'w', encoding='utf-8') as jsonl_file:
+        for record in filtered_data_dict:
+            jsonl_file.write(json.dumps(record, ensure_ascii=False) + '\n')
