@@ -1,6 +1,7 @@
 import json
 import tarfile
 import pandas
+import os
 
 """The tarfile module makes it possible to read and write tar archives"""
 
@@ -28,7 +29,7 @@ def filter_into_jsonl(xlsx_file_path, output_dir, filter_column, filter_value):
         xlsx_file_path (str): Input Excel file path, output_dir (str): Output directory for JSON Lines file, filter_column (str): Column to filter
         filter_value (str): Value to filter by"""
 
-    data_f = pd.read_excel(xlsx_file_path)
+    data_f = pandas.read_excel(xlsx_file_path)
     filtered_data = data_f[data_f[filter_column] == filter_value]
     filtered_data_dict = filtered_data.to_dict(orient='records')
 
