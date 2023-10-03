@@ -20,3 +20,31 @@ def load_dataset(dataset_path):
     data_frame = pandas.DataFrame(data)
 
     return data_frame
+    
+def generate_language_excel_files(data_frame, output_dir):
+
+"""Combines data from 'en-US' and other locales and saves as Excel files.
+    Args:
+        data_frame (pd.DataFrame): DataFrame containing data for various locales.
+        output_dir (str): Directory to save the generated Excel files."""
+        
+    locales = data_frame['locale'].unique()
+
+    if 'en-US' in locales:
+
+        en_data = data_frame[data_frame['locale'] == 'en-US']
+        output_file_path = os.path.join(output_dir, 'en-en.xlsx')
+        en_data.to_excel(output_file_path, index=False)
+
+    for locale in locales:
+
+        if locale == 'en-US':
+
+            continue  
+        
+        locale_data = data_frame[data_frame['locale'] == locale]
+        en_us_data = data_frame[data_frame['locale'] == 'en-US'][['id', 'utt', 'annot_utt']]
+        combined_data = pandas.merge(en_us_data, locale_data, on='id', how='inner')
+
+        output_file_path = os.path.join(output_dir, f'en-{locale}.xlsx')
+        combined_data.to_excel(output_file_path, index=False)
