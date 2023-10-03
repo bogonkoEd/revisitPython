@@ -21,6 +21,36 @@ def load_dataset(dataset_path):
     data_frame = pandas.DataFrame(data)
 
     return data_frame
+
+
+def generate_translation_jsonl(dataframe, output_dir):
+    """ Combines translations from a DataFrame and saves them as (.jsonl) file.
+         Args:
+        dataframe (pandas.DataFrame): DataFrame containing translation data. output_dir (str): Directory to save the combined file."""
+
+    locales = dataframe['locale'].unique()
+
+    combined_data_list = []
+
+
+    for locale in locales:
+
+        if locale == 'en-US':
+
+            continue
+
+        locale_data = dataframe[dataframe['locale'] == locale]
+        combined_data = pandas.merge(en_data, locale_data, on='id', how='inner')
+        combined_data_list.extend(combined_data.to_dict('records'))
+
+    jsonl_file_path = os.path.join(output_dir, 'combined_translation.jsonl')
+
+    with open(jsonl_file_path, 'w', encoding='utf-8') as jsonl_file:
+
+        for record in combined_data_list:
+          
+          jsonl_file.write(json.dumps(record, ensure_ascii=False) + '\n')
+
     
 
 def generate_language_excel_files(data_frame, output_dir):
@@ -38,11 +68,6 @@ def generate_language_excel_files(data_frame, output_dir):
         output_file_path = os.path.join(output_dir, 'en-en.xlsx')
         en_data.to_excel(output_file_path, index=False)
 
-    for locale in locales:
-
-        if locale == 'en-US':
-
-            continue  
         
         locale_data = data_frame[data_frame['locale'] == locale]
         en_us_data = data_frame[data_frame['locale'] == 'en-US'][['id', 'utt', 'annot_utt']]
@@ -65,4 +90,5 @@ def filter_into_jsonl(xlsx_file_path, output_dir, filter_column, filter_value):
     jsonl_file_path = os.path.join(output_dir, f'{filter_value}.jsonl')
     with open(jsonl_file_path, 'w', encoding='utf-8') as jsonl_file:
         for record in filtered_data_dict:
-            jsonl_file.write(json.dumps(record, ensure_ascii=False) + '\n')
+          jsonl_file.write(json.dumps(record, ensure_ascii=False) + '\n')
+      
