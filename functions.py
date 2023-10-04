@@ -8,16 +8,17 @@ import os
 
 def load_dataset(dataset_path):
     """Function to Read data from the Massive Dataset."""
-    data = []
+    def _jsonl_generator():
+        with tarfile.open(dataset_path, mode="r:gz") as data_archive:
+            for member in data_archive.getmembers():
+                if member.isfile() and member.name.endswith(".jsonl"):
+                    with data_archive.extractfile(member) as file:
+                        for line_bytes in file:
+                            line = line_bytes.decode("utf-8").strip()
+                            if line:
+                                yield json.loads(line)
 
-    with tarfile.open(dataset_path, mode="r:gz") as data_archive:
-        for member in data_archive.getmembers():
-            if member.isfile() and member.name.endswith(".jsonl"):
-                with data_archive.extractfile(member) as jsonl_data:
-                    for line_bytes in jsonl_data:
-                        line = line_bytes.decode("utf-8").strip()
-                        if line:
-                            data.append(json.loads(line))
+    data = _jsonl_generator()
 
     data_frame = pandas.DataFrame(data)
 
