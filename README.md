@@ -35,4 +35,4 @@ To run the project, follow these steps:
 - 139991 Glen Musa
 
 ## License
-This project currently does not contain any licenses.
+bogonkoEd/revisitPython is licensed under the MIT License.
