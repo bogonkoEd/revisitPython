@@ -1,13 +1,12 @@
+import os
 import json
 import tarfile
 import pandas
-import os
-
-"""The tarfile module makes it possible to read and write tar archives"""
 
 
 def load_dataset(dataset_path):
     """Function to Read data from the Massive Dataset."""
+
     def _jsonl_generator():
         with tarfile.open(dataset_path, mode="r:gz") as data_archive:
             for member in data_archive.getmembers():
@@ -25,21 +24,19 @@ def load_dataset(dataset_path):
     return data_frame
 
 
-def generate_translation_jsonl(dataframe, output_dir):
-    """Combines translations from a DataFrame and saves them as (.jsonl) file.
-     Args:
-    dataframe (pandas.DataFrame): DataFrame containing translation data. output_dir (str): Directory to save the combined file.
-    """
+def generate_translation_jsonl(data_frame, output_dir):
+    """Combines translations from a DataFrame and saves them as (.jsonl) file."""
 
-    locales = dataframe["locale"].unique()
-
+    locales = data_frame["locale"].unique()
     combined_data_list = []
 
     for locale in locales:
         if locale == "en-US":
             continue
-        en_data = dataframe[dataframe["locale"] == "en-US"][["id", "utt", "annot_utt"]]
-        locale_data = dataframe[dataframe["locale"] == locale]
+        en_data = data_frame[data_frame["locale"] == "en-US"][
+            ["id", "utt", "annot_utt"]
+        ]
+        locale_data = data_frame[data_frame["locale"] == locale]
         combined_data = pandas.merge(en_data, locale_data, on="id", how="inner")
         combined_data_list.extend(combined_data.to_dict("records"))
 
@@ -51,10 +48,7 @@ def generate_translation_jsonl(dataframe, output_dir):
 
 
 def generate_language_excel_files(data_frame, output_dir):
-    """Combines data from 'en-US' and other locales and saves as Excel files.
-    Args:
-        data_frame (pd.DataFrame): DataFrame containing data for various locales.
-        output_dir (str): Directory to save the generated Excel files."""
+    """Combines data from 'en-US' and other locales and saves as Excel files."""
 
     locales = data_frame["locale"].unique()
 
@@ -72,19 +66,15 @@ def generate_language_excel_files(data_frame, output_dir):
                 ["id", "utt", "annot_utt"]
             ]
             combined_data = pandas.merge(en_us_data, locale_data, on="id", how="inner")
-
             output_file_path = os.path.join(output_dir, f"en-{locale}.xlsx")
             combined_data.to_excel(output_file_path, index=False)
 
 
 def filter_into_jsonl(xlsx_file_path, output_dir, filter_column, filter_value):
-    """Reads data from Excel file, filters it based on a specified column and value and saves as jsonl file
-    Args:
-        xlsx_file_path (str): Input Excel file path, output_dir (str): Output directory for JSON Lines file, filter_column (str): Column to filter
-        filter_value (str): Value to filter by"""
+    """Reads data from Excel file, filters it based on a specified column and value and saves as jsonl file."""
 
-    data_f = pandas.read_excel(xlsx_file_path)
-    filtered_data = data_f[data_f[filter_column] == filter_value]
+    data_frame = pandas.read_excel(xlsx_file_path)
+    filtered_data = data_frame[data_frame[filter_column] == filter_value]
     filtered_data_dict = filtered_data.to_dict(orient="records")
 
     jsonl_file_path = os.path.join(output_dir, f"{filter_value}.jsonl")
