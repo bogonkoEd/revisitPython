@@ -1,29 +1,34 @@
 import functions
 import os
+from absl import flags, app
+
+FLAGS = flags.FLAGS
+
+flags.DEFINE_string('archive_path', 'data/dataset.tar.gz', 'Path to the dataset archive')
+flags.DEFINE_string('output_directory', 'language_specific_files', 'Path to the output directory')
+flags.DEFINE_string('output_dir', 'jsonl_files', 'Path to the output directory')
+flags.DEFINE_string('filter_column', 'partition', 'Column to filter on')
+
+def main(argv):
+    """Loading and preprocessing the dataset""" 
+    df = functions.load_dataset(FLAGS.archive_path)
+
+    os.makedirs(FLAGS.output_directory, exist_ok=True)
+    functions.generate_language_excel_files(df, FLAGS.output_directory)
+
+    os.makedirs(FLAGS.output_dir, exist_ok=True)
 
 
-def main():
-    dataset_path = "data/dataset.tar.gz"
-    data_frame = functions.load_dataset(dataset_path)
-    output_dir = 'language_specific_files'
-    os.makedirs(output_dir, exist_ok=True)
-    functions.generate_language_excel_files(data_frame, output_dir)
+    filters = [
+        ('language_specific_files/en-en.xlsx', 'test'),
+        ('language_specific_files/en-de.xlsx', 'train'),
+        ('language_specific_files/en-sw.xlsx', 'dev'),
+    ]
 
-    out_dir = 'jsonl_files'
-    os.makedirs(out_dir, exist_ok=True)
-    filter_column = 'partition'
-    sw_value = 'dev'
-    en_value = 'test'
-    de_value = 'train'
-    en_path = 'language_specific_files/en-en.xlsx'
-    de_path = 'language_specific_files/en-de-DE.xlsx'
-    sw_path = 'language_specific_files/en-sw-KE.xlsx'
-    functions.filter_into_jsonl(en_path, out_dir, filter_column, en_value)
-    functions.filter_into_jsonl(de_path, out_dir, filter_column, de_value)
-    functions.filter_into_jsonl(sw_path, out_dir, filter_column, sw_value)
+    for path, filter_value in filters:
+        functions.filter_into_jsonl(path, FLAGS.output_dir, FLAGS.filter_column, filter_value)
 
-    functions.generate_translations(data_frame, out_dir)
+    functions.generate_translation_jsonl(df, FLAGS.output_dir)
 
-
-if __name__ == "__main__":
-    main()
+if _name_ == "_main_":
+    app.run(main)
