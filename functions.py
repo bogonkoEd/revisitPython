@@ -52,12 +52,7 @@ def generate_language_excel_files(data_frame, output_dir):
 
     locales = data_frame["locale"].unique()
 
-    if "en-US" in locales:
-        en_data = data_frame[data_frame["locale"] == "en-US"]
-        output_file_path = os.path.join(output_dir, "en-en.xlsx")
-        en_data.to_excel(output_file_path, index=False)
-
-        for locale in locales:
+    for locale in locales:
             if locale == "en-US":
                 continue
 
@@ -68,6 +63,13 @@ def generate_language_excel_files(data_frame, output_dir):
             combined_data = pandas.merge(en_us_data, locale_data, on="id", how="inner")
             output_file_path = os.path.join(output_dir, f"en-{locale[:2]}.xlsx")
             combined_data.to_excel(output_file_path, index=False)
+
+    if "en-US" in locales:
+        en_data = data_frame[data_frame["locale"] == "en-US"]
+        output_file_path = os.path.join(output_dir, "en-en.xlsx")
+        en_data.to_excel(output_file_path, index=False)
+
+        
 
 
 def filter_into_jsonl(xlsx_file_path, output_dir, filter_column, filter_value):
