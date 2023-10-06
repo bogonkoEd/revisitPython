@@ -2,6 +2,8 @@ import os
 import json
 import tarfile
 import pandas
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 
 
 def load_dataset(dataset_path):
@@ -73,7 +75,7 @@ def generate_language_excel_files(data_frame, output_dir):
 
 
 def filter_into_jsonl(xlsx_file_path, output_dir, filter_column, filter_value):
-    """Reads data from Excel file, filters it based on a specified column and value and saves as jsonl file."""
+    """Reads data from Excel file, filters it based on a specified value."""
 
     data_frame = pandas.read_excel(xlsx_file_path)
     filtered_data = data_frame[data_frame[filter_column] == filter_value]
@@ -83,3 +85,21 @@ def filter_into_jsonl(xlsx_file_path, output_dir, filter_column, filter_value):
     with open(jsonl_file_path, "w", encoding="utf-8") as jsonl_file:
         for record in filtered_data_dict:
             jsonl_file.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
+def upload_file(directories):
+    """Uploads files to Google Drive."""
+    gauth = GoogleAuth() 
+    drive = GoogleDrive(gauth)
+
+    for directory in directories:
+        for filename in os.listdir(directory):
+            print(filename)
+        
+            file1 = drive.CreateFile() 
+            path = os.path.join(directory, filename)
+            
+            file1.SetContentFile(path) 
+            file1.Upload()
+
+            print("The file " + filename + " has been uploaded to Google Drive")

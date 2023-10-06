@@ -32,6 +32,10 @@ def main(_):
 
     functions.generate_translation_jsonl(data_frame, FLAGS.output_dir)
 
+  
+    functions.upload_files(FLAGS.output_dir, FLAGS.output_directory)
+    
+
 
 if __name__ == "__main__":
     app.run(main)
