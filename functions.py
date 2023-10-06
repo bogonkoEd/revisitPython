@@ -44,7 +44,7 @@ def generate_translation_jsonl(data_frame, output_dir):
 
     with open(jsonl_file_path, "w", encoding="utf-8") as jsonl_file:
         for record in combined_data_list:
-            jsonl_file.write(json.dumps(record, ensure_ascii=False) + "\n")
+            jsonl_file.write(json.dumps(record, ensure_ascii=False, indent=4) + "\n")
 
 
 def generate_language_excel_files(data_frame, output_dir):
@@ -82,4 +82,4 @@ def filter_into_jsonl(xlsx_file_path, output_dir, filter_column, filter_value):
     jsonl_file_path = os.path.join(output_dir, f"{filter_value}.jsonl")
     with open(jsonl_file_path, "w", encoding="utf-8") as jsonl_file:
         for record in filtered_data_dict:
-            jsonl_file.write(json.dumps(record, ensure_ascii=False) + "\n")
+            jsonl_file.write(json.dumps(record, ensure_ascii=False, indent= 4) + "\n")
