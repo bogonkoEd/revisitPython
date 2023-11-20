@@ -1,4 +1,4 @@
-# Computer-Graphics: REVISTING PYTHON - Group 12 CAT 1
+# Computer-Graphics: REVISTING PYTHON
 
 ## About
 This Python3 development project establishes an environment for data processing and file manipulation. It structures a PyCharm project, imports a massive dataset, and accomplishes three main tasks. It creates language-specific files and a comprehensive translation dataset ensuring clean file management with GitHub integration.
