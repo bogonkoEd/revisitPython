@@ -69,12 +69,5 @@ To set up and run the project, follow these steps:
     deactivate
     ```
 
-## Team
-- 137192 Eddy Bogonko
-- 137938 Martin Mwangi
-- 136603 Jane Daisy
-- 146013 Amanda Karani
-- 139991 Glen Musa
-
 ## License
 bogonkoEd/revisitPython is licensed under the MIT License.
